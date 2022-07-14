@@ -1,0 +1,21 @@
+version: '2'
+
+services:
+  client:
+    build: ./frontend
+    ports:
+      - "80:80"
+  server:
+    build: ./backend
+    ports:
+      - "8080:8080"
+    depends_on:
+      - database
+  database:
+    image: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+    ports:
+     - "27017:27017"
