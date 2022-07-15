@@ -1,6 +1,7 @@
-const { insertImage } = require("../services/imageService");
+const { insertImage, getImageById } = require("../services/imageService");
 const fs = require('fs');
 const path = require("path");
+const { ObjectId } = require("mongodb");
 const sizeOf = require('image-size').imageSize;
 
 async function addImage(req, res, next) {
@@ -12,8 +13,20 @@ async function addImage(req, res, next) {
     if (!fs.existsSync(generateFileDirPath())) fs.promises.mkdir(generateFileDirPath(), { recursive: true });
     await fs.promises.writeFile(filePath, bufferImage);
     const size = sizeOf(bufferImage);
-    const result = insertImage(generateFileName(bufferImage), size.width, size.height, req.body.description, req.user);
+    const result = await insertImage(generateFileName(bufferImage), size.width, size.height, req.body.description, req.user);
     res.status(201).send(result);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ error });
+  }
+}
+
+async function getImage(req, res, next) {
+  if (!ObjectId.isValid(req.params.id)) return res.status(400).send({ error: "Invalid object ID" });
+  try {
+    const result = await getImageById(req.params.id);
+    if (result) res.status(200).send(result);
+    else res.status(404).send();
   } catch (error) {
     console.error(error);
     res.status(500).send({ error });
@@ -47,4 +60,4 @@ function generateFilePath(buffer) {
   return path.join(basePath, fileName);
 }
 
-module.exports = { addImage };
+module.exports = { addImage, getImage };
