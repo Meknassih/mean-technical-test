@@ -44,4 +44,10 @@ async function updateImage(id, owner, partialDocument) {
   });
 }
 
-module.exports = { getImageById, getAllImages, insertImage, getImageByFileName, updateImage };
+async function deleteImageById(id) {
+  return useDatabase(async (db) => {
+    return await db.collection("images").deleteOne({ _id: new ObjectId(id) });
+  });
+}
+
+module.exports = { getImageById, getAllImages, insertImage, getImageByFileName, updateImage, deleteImageById };

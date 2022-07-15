@@ -1,4 +1,4 @@
-const { insertImage, getImageById, getAllImages, getImageByFileName, updateImage } = require("../services/imageService");
+const { insertImage, getImageById, getAllImages, getImageByFileName, updateImage, deleteImageById } = require("../services/imageService");
 const fs = require('fs');
 const path = require("path");
 const { ObjectId } = require("mongodb");
@@ -97,6 +97,30 @@ async function getImages(req, res, next) {
   }
 }
 
+async function deleteImage(req, res, next) {
+  if (!ObjectId.isValid(req.params.id)) return res.status(400).send({ error: "Invalid object ID" });
+  try {
+    // Get image from DB
+    const document = await getImageById(req.params.id);
+    if (!document) res.status(204).send();
+
+    // Delete file from storage
+    const filePath = path.join(generateDirectoryPath(), document.fileName);
+    if (fs.existsSync(filePath)) {
+      const deleteResult = await fs.promises.rm(filePath);
+      if (deleteResult !== undefined) return res.status(500).send({ error: "Could not remove file from storage" });
+    }
+
+    // Delete document from DB
+    const result = await deleteImageById(req.params.id);
+    if (result.acknowledged) res.status(204).send();
+    else res.status(500).send({ error: "Database deletion failed" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ error });
+  }
+}
+
 // Utility functions
 
 function validateImageBodyOrfail(req, res) {
@@ -142,4 +166,4 @@ function generateFilePath(buffer) {
   return path.join(basePath, fileName);
 }
 
-module.exports = { addImage, getImage, getImages, patchImage };
+module.exports = { addImage, getImage, getImages, patchImage, deleteImage };
