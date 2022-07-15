@@ -7,6 +7,12 @@ async function getImageById(imageId) {
   });
 }
 
+async function getImageByFileName(fileName) {
+  return useDatabase(async (db) => {
+    return await db.collection("images").findOne({ fileName });
+  });
+}
+
 async function getAllImages() {
   return useDatabase(async (db) => {
     // Hard limit to 1000 documents to keep the project simple
@@ -15,10 +21,10 @@ async function getAllImages() {
   });
 }
 
-async function insertImage(filename, width, height, description, owner) {
+async function insertImage(fileName, width, height, description, owner) {
   return useDatabase(async (db) => {
     return await db.collection("images").insertOne({
-      filename,
+      fileName,
       width,
       height,
       description,
@@ -27,4 +33,4 @@ async function insertImage(filename, width, height, description, owner) {
   });
 }
 
-module.exports = { getImageById, getAllImages, insertImage };
+module.exports = { getImageById, getAllImages, insertImage, getImageByFileName };

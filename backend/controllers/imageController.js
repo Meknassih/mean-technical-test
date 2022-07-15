@@ -1,4 +1,4 @@
-const { insertImage, getImageById, getAllImages } = require("../services/imageService");
+const { insertImage, getImageById, getAllImages, getImageByFileName } = require("../services/imageService");
 const fs = require('fs');
 const path = require("path");
 const { ObjectId } = require("mongodb");
@@ -10,7 +10,15 @@ async function addImage(req, res, next) {
   try {
     const bufferImage = Buffer.from(req.body.image, "base64");
     const filePath = generateFilePath(bufferImage);
-    if (!fs.existsSync(generateFileDirPath())) fs.promises.mkdir(generateFileDirPath(), { recursive: true });
+
+    // Check if file exists thanks to hashed file names
+    if (fs.existsSync(filePath)) {
+      const result = await getImageByFileName(generateFileName(bufferImage));
+      return res.status(409).send({ error: "Image exists already", image: result });
+    }
+
+    // Proceed to save file to disk & database
+    if (!fs.existsSync(generateDirectoryPath())) fs.promises.mkdir(generateDirectoryPath(), { recursive: true });
     await fs.promises.writeFile(filePath, bufferImage);
     const size = sizeOf(bufferImage);
     const result = await insertImage(generateFileName(bufferImage), size.width, size.height, req.body.description, req.user);
@@ -60,13 +68,13 @@ function generateFileName(buffer) {
   return `${hash.digest("hex")}.${size.type}`;
 }
 
-function generateFileDirPath() {
+function generateDirectoryPath() {
   return process.env.IMAGE_DIRECTORY || path.join(__dirname, "..", "public", "images");
 }
 
 function generateFilePath(buffer) {
   const fileName = generateFileName(buffer);
-  const basePath = generateFileDirPath();
+  const basePath = generateDirectoryPath();
   return path.join(basePath, fileName);
 }
 
