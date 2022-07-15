@@ -2,7 +2,7 @@ const { useDatabase } = require("./mongoService");
 
 async function getUser(name) {
   return useDatabase(async (db) => {
-    return await db.collection("users").findOne({ name: name });
+    return await db.collection("users").findOne({ name });
   });
 }
 
