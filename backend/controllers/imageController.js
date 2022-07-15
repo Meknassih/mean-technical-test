@@ -21,7 +21,11 @@ async function addImage(req, res, next) {
     if (!fs.existsSync(generateDirectoryPath())) fs.promises.mkdir(generateDirectoryPath(), { recursive: true });
     await fs.promises.writeFile(filePath, bufferImage);
     const size = sizeOf(bufferImage);
-    const result = await insertImage(generateFileName(bufferImage), size.width, size.height, req.body.description, req.user);
+    const insertResult = await insertImage(generateFileName(bufferImage), size.width, size.height, req.body.description, req.user);
+    if (!insertResult.acknowledged) return res.status(500).send({ error: "Database insert failed" });
+
+    // Return the newly inserted document
+    const result = await getImageById(insertResult.insertedId);
     res.status(201).send(result);
   } catch (error) {
     console.error(error);
