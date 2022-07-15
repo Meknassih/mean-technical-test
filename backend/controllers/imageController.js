@@ -1,4 +1,4 @@
-const { insertImage, getImageById } = require("../services/imageService");
+const { insertImage, getImageById, getAllImages } = require("../services/imageService");
 const fs = require('fs');
 const path = require("path");
 const { ObjectId } = require("mongodb");
@@ -33,6 +33,16 @@ async function getImage(req, res, next) {
   }
 }
 
+async function getImages(req, res, next) {
+  try {
+    const result = await getAllImages();
+    res.status(200).send(result);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ error });
+  }
+}
+
 function validateImageBodyOrfail(req, res) {
   if (!req.body.image || !req.body.description || req.body.description.length < 10) {
     res.status(400).send({
@@ -60,4 +70,4 @@ function generateFilePath(buffer) {
   return path.join(basePath, fileName);
 }
 
-module.exports = { addImage, getImage };
+module.exports = { addImage, getImage, getImages };
