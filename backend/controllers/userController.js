@@ -1,4 +1,4 @@
-const { insertUser, getUser } = require("../services/mongoService");
+const { insertUser, getUser } = require("../services/userService");
 
 async function login(req, res, next) {
   if (!validateUserBodyOrFail(req, res)) return;

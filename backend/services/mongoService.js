@@ -23,19 +23,4 @@ async function ping() {
   });
 }
 
-async function getUser(name) {
-  return useDatabase(async (db) => {
-    return await db.collection("users").findOne({ name: name });
-  });
-}
-
-async function insertUser(name, password) {
-  return useDatabase(async (db) => {
-    return await db.collection("users").insertOne({
-      name,
-      password
-    });
-  });
-}
-
-module.exports = { ping, getUser, insertUser };
+module.exports = { ping, useDatabase };
