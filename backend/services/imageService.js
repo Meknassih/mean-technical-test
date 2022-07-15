@@ -33,4 +33,15 @@ async function insertImage(fileName, width, height, description, owner) {
   });
 }
 
-module.exports = { getImageById, getAllImages, insertImage, getImageByFileName };
+async function updateImage(id, owner, partialDocument) {
+  return useDatabase(async (db) => {
+    return await db.collection("images").updateOne({ _id: new ObjectId(id) }, {
+      $set: {
+        owner,
+        ...partialDocument
+      }
+    });
+  });
+}
+
+module.exports = { getImageById, getAllImages, insertImage, getImageByFileName, updateImage };
