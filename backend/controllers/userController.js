@@ -2,7 +2,6 @@ const { insertUser, getUser } = require("../services/mongoService");
 
 async function login(req, res, next) {
   if (!validateUserBodyOrFail(req, res)) return;
-  let result;
   try {
     // Get user by name
     const storedUser = await getUser(req.body.name);
