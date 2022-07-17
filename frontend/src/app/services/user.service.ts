@@ -7,18 +7,42 @@ import { environment } from '../../environments/environment';
   providedIn: 'root'
 })
 export class UserService {
-  // Store only in memory for added security
-  private _jwt: string;
+  private _jwt: string | null;
+  public get jwt(): string | null {
+    return this._jwt;
+  }
+  private _name: string | null;
+  public get name(): string | null {
+    return this._name;
+  }
 
   constructor(private http: HttpClient) {
-    this._jwt = "NOT_AUTHENTICATED";
+    this._jwt = localStorage.getItem("jwt");
+    this._name = localStorage.getItem("username");
   }
 
   login(name: string, password: string): Observable<LoginResponse> {
     return this.http.post<LoginResponse>(`${environment.apiURL}/users`, {
       name,
       password
-    }).pipe(tap(result => this._jwt = result.jwt))
+    }).pipe(tap(result => {
+      localStorage.setItem("jwt", result.jwt)
+      localStorage.setItem("username", name)
+      this._jwt = result.jwt;
+      this._name = name;
+    }))
+  }
+
+  isLoggedIn(): boolean {
+    return !!this._jwt;
+  }
+
+  logout(): void {
+    // JWTs cannot be revoked so we only logout client-wise
+    localStorage.removeItem("jwt")
+    localStorage.removeItem("username")
+    this._jwt = null;
+    this._name = null;
   }
 }
 

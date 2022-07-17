@@ -1,3 +1,9 @@
-<mat-toolbar color="primary">
+<mat-toolbar color="primary" class="toolbar">
   <span>MTL</span>
+  <div class="right" *ngIf="isLoggedIn()">
+    <span class="username">{{name()}}</span>
+    <button mat-icon-button aria-label="Log out" (click)="logout()">
+      <mat-icon>logout</mat-icon>
+    </button>
+  </div>
 </mat-toolbar>

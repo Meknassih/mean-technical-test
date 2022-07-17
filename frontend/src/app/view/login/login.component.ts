@@ -1,6 +1,6 @@
-import { Location } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Router } from '@angular/router';
 import { UserService } from '../../services/user.service';
 
 @Component({
@@ -15,7 +15,7 @@ export class LoginComponent implements OnInit {
   constructor(
     private userService: UserService,
     private snackBar: MatSnackBar,
-    private location: Location
+    private router: Router
   ) { }
 
   ngOnInit(): void {
@@ -24,7 +24,7 @@ export class LoginComponent implements OnInit {
   login() {
     this.userService.login(this.name, this.password).subscribe({
       next: () => {
-        this.location.go("/")
+        this.router.navigate(["/"])
       },
       error: error => {
         console.warn(error)

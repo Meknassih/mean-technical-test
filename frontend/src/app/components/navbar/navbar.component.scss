@@ -1,0 +1,15 @@
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+}
+
+.right {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.username {
+  font-size: small;
+  font-weight: normal;
+  color: rgba($color: #fff, $alpha: .66)
+}

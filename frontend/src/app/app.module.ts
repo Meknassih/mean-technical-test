@@ -13,6 +13,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatIconModule } from '@angular/material/icon';
 
 import { LoginComponent } from './view/login/login.component';
 import { HomeComponent } from './view/home/home.component';
@@ -36,6 +37,7 @@ import { HomeComponent } from './view/home/home.component';
     HttpClientModule,
     MatSnackBarModule,
     FormsModule,
+    MatIconModule,
   ],
   providers: [],
   bootstrap: [AppComponent]
