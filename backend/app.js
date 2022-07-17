@@ -1,4 +1,4 @@
-require('dotenv').config();
+// require('dotenv').config();
 const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
@@ -15,7 +15,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use("/static", express.static(path.join(__dirname, 'public')));
-console.log(`Server up at port ${process.env.PORT}`)
+
 
 const apiEndpointPrefix = "/api/v1";
 app.use(`${apiEndpointPrefix}/`, indexRouter);
